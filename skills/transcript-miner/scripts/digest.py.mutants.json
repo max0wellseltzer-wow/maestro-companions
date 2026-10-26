@@ -1,0 +1,30 @@
+[
+ [
+  "return SECRET.sub(\"<redacted>\", text)",
+  "return text"
+ ],
+ [
+  "if isinstance(content, list) and any(isinstance(b, dict) and b.get(\"type\") == \"tool_result\" for b in content):\n                continue",
+  "pass"
+ ],
+ [
+  "if not t or \"<task-notification>\" in t",
+  "if not t"
+ ],
+ [
+  "t = REMINDER.sub(\"\", text_of(content)).strip()",
+  "t = text_of(content).strip()"
+ ],
+ [
+  "{redact(collapse_command(t))[:8000]}",
+  "{redact(t)[:8000]}"
+ ],
+ [
+  "lines = [x for x in entries(f) if x[0] >= since]",
+  "lines = entries(f)"
+ ],
+ [
+  "prompts = sum(1 for x in part if x[1].startswith(\"\\n### MAX\"))",
+  "prompts = len(part)"
+ ]
+]

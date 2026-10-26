@@ -1,6 +1,6 @@
-# maestro-companions (Claude Code plugin package, v0.1.0)
+# maestro-companions (Claude Code plugin package, v0.2.0)
 
-Sixty-seven skills that go well with skill-maestro, chosen by evidence, not by theme: every skill the Maestro's own ledger shows was read, tried, judged to fit or rated useful in real sessions on the author's machine (pack_build.py --suggest, 2026-10-26), plus pov-core, the engine the twenty-two point-of-view lenses run on, and literal-execution, which finish-everything loads. Each skill folder keeps its SKILL.md and scripts; paths and the author's name are scrubbed. Some were written for one workspace's rituals (landing, decisions, scheduled tasks); their SKILL.md says so in its first lines.
+Seventy skills that go well with skill-maestro, chosen by evidence, not by theme: every skill the Maestro's own ledger shows was read, tried, judged to fit or rated useful in real sessions on the author's machine (pack_build.py --suggest, 2026-10-26), plus the skills those scripts import: pov-core, the engine the twenty-two point-of-view lenses run on; literal-execution, which finish-everything loads; prompt-genealogy and dead-lane-check, which demand-scan and lane-resurrection load; and transcript-miner, whose redaction rule prompt-genealogy shares. Each skill folder keeps its SKILL.md and scripts; paths and the author's name are scrubbed. Some were written for one workspace's rituals (landing, decisions, scheduled tasks); their SKILL.md says so in its first lines.
 
 ## Install
 
@@ -11,7 +11,7 @@ Sixty-seven skills that go well with skill-maestro, chosen by evidence, not by t
 
 By hand: copy every folder under `skills/` into `~/.claude/skills/`.
 
-## Skills (67)
+## Skills (70)
 
 | skill | what it is for |
 |---|---|
@@ -82,19 +82,20 @@ By hand: copy every folder under `skills/` into `~/.claude/skills/`.
 | `map-vs-territory` | Compares numbers that docstrings and comments claim (lines, functions, checks, arguments, defaults) with what the code measures by ast, listing drifted claim... |
 | `peacock-tail` | Honest-advertising audit of the skill library - for each tool-backed skill, extract what its SKILL.md claims (functions named in code spans and from-imports,... |
 | `literal-execution` | Take the user literally - "do this literally, do not talk about it, just do it" - read his prompt as a contract before acting - do the exact verb on the exac... |
+| `prompt-genealogy` | Trace a theme through the user's own prompts - give keywords or a regex and get a dated timeline (earliest first) of every real the user prompt across all se... |
+| `dead-lane-check` | Before running any experiment or test on a trading idea, look the lane up in the verdict record (memory notes, GRAVEYARD.md, receipts, kill logs, DECISIONS,... |
+| `transcript-miner` | Read every past session transcript in full via digests and fresh-context readers - for completeness audits ("are you done?", "what did I ask for"), rewriting... |
 
 ## Needs a neighbour
 
-Most skills here run on their own, and seven of them import a sibling that is also in this pack (`pov-core`, `cross-breed`, `literal-execution` and the like), so installing the whole pack covers them. Four scripts import a skill that is **not** in this pack; their SKILL.md still reads fine, but the script stops with `ModuleNotFoundError` until the neighbour sits beside it in `~/.claude/skills/`:
+Most skills here run on their own; the ones that import a sibling (the point-of-view lenses load `pov-core`; others load `literal-execution`, `prompt-genealogy`, `dead-lane-check`, `transcript-miner`, `exaptation-finder` or `self-attacking-referee`) find it in this same pack, so installing the whole pack covers them. Five scripts import a skill that ships in the [skill-maestro](https://github.com/max0wellseltzer-wow/skill-maestro) plugin; their SKILL.md still reads fine, but the script stops with `ModuleNotFoundError` until that plugin is installed too:
 
-| script | needs | where to get it |
-|---|---|---|
-| `demand-scan/demand_scan.py` | `skill-finder`, `prompt-genealogy` | `skill-finder` ships in the [skill-maestro](https://github.com/max0wellseltzer-wow/skill-maestro) plugin; `prompt-genealogy` is in the author's library, not yet published |
-| `exaptation-finder/exaptation.py`, `peacock-tail/peacock.py`, `rule-conflict/rule_conflict.py` | `skill-finder` | the skill-maestro plugin |
-| `lane-resurrection/resurrect.py` | `dead-lane-check` | the author's library, not yet published |
-| `pov-core/ratify.py` | `skill-health` | the skill-maestro plugin |
+| script | needs |
+|---|---|
+| `demand-scan/demand_scan.py`, `exaptation-finder/exaptation.py`, `peacock-tail/peacock.py`, `rule-conflict/rule_conflict.py` | `skill-finder` |
+| `pov-core/ratify.py` | `skill-health` |
 
-Install skill-maestro first and three of the four work; open an issue if you want `prompt-genealogy` or `dead-lane-check` published too.
+Install skill-maestro and all five work.
 
 ## License
 
