@@ -1,0 +1,46 @@
+[
+ [
+  "if e.get(\"test\") in have_tests:",
+  "if e.get(\"id\") in have_tests:"
+ ],
+ [
+  "while e.get(\"id\") in have_ids:",
+  "while False:"
+ ],
+ [
+  "if base == before:",
+  "if False:"
+ ],
+ [
+  "if ln.startswith(\"+ \")",
+  "if ln"
+ ],
+ [
+  "if conflicted == [\"tests.json\"]:",
+  "if \"tests.json\" in conflicted:"
+ ],
+ [
+  "git(live, \"reset\", \"-q\", \"--hard\", before, runner=runner)",
+  "pass"
+ ],
+ [
+  "if code or \"CHECK PASSED\" not in out:",
+  "if code:"
+ ],
+ [
+  "        if moved is None:\n            return res\n",
+  ""
+ ],
+ [
+  "    finally:\n        pen.release()",
+  "    finally:\n        pass"
+ ],
+ [
+  "if held:",
+  "if False:"
+ ],
+ [
+  "must_check = check and checked != head",
+  "must_check = check and checked is None"
+ ]
+]

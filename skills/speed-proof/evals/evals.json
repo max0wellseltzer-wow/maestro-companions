@@ -1,0 +1,55 @@
+{
+  "skill_name": "speed-proof",
+  "evals": [
+    {
+      "id": 1,
+      "eval_name": "csv-report-3x",
+      "prompt": "There is a small project at {workdir} (a git repo with one commit). `python report.py data.csv` prints a ranked table of 100 symbols but takes a few seconds, which is too slow for something we run all day. Make it at least 3x faster. The printed table must stay byte-identical - the only thing allowed to differ is the first line, which carries the time it was generated. Keep it standard library only. Commit as you go, and finish with a short write-up of what you measured and what changed.",
+      "expected_output": "report.py 3x+ faster, same table; a committed baseline measured before any edit (CPU seconds, min of N); an equality proof; planted bugs; a plain report with a before/after table and what was not sped up.",
+      "files": ["evals/files/make_fixtures.py"],
+      "assertions": [
+        "A committed baseline file with per-command CPU-second numbers exists in a commit that precedes, in git log order, the first commit that changes report.py",
+        "The baseline file records the sha256 of report.py and it equals the sha256 of the original fixture's report.py",
+        "The metric is labelled CPU seconds (or process time), min (or median) of N>=3 runs - not a single wall-clock figure",
+        "With the first 'generated:' line removed, the new output is byte-identical to the original for data.csv and for a second data file (seed 2) the candidate never saw",
+        "An independent re-measure shows the new report.py at least 3x faster in CPU seconds than the original",
+        "No import outside the Python standard library appears in any .py file of the repo",
+        "At least 3 planted bugs are listed with a KILLED/SURVIVED verdict each, at least one targeting the 20-day window mechanism",
+        "The write-up has a before/after table, names the metric and the equality proof, and lists at least one thing deliberately not sped up"
+      ]
+    },
+    {
+      "id": 2,
+      "eval_name": "search-index-honesty",
+      "prompt": "At {workdir} there is a notes folder (1,500 markdown notes) and `python find.py \"golden volume spike\"` which lists the notes containing a phrase. It takes seconds every single call and people run it constantly. Make it fast. Be aware that people edit, add and delete notes all day. Results must not change. Standard library only; commit as you go; end with a short write-up.",
+      "expected_output": "find.py fast via an honest derived index (signature of each source file compared before use, exact fallback when stale, verify and rebuild commands), identical results including after edits, planted bugs, report.",
+      "files": ["evals/files/make_fixtures.py"],
+      "assertions": [
+        "Output of find.py is byte-identical to the original for 5 phrases including one with zero hits",
+        "After one word in one note is replaced by a different word of the same length (size unchanged, mtime changed) and find.py runs with no rebuild, the result equals the original program's result on the edited folder",
+        "After one note is deleted and a new note containing the phrase is added, the result equals the original program's result (no stale hit on the deleted file)",
+        "If a derived file exists, a documented verify (audit) command exits non-zero after the derived file is corrupted and zero after the documented rebuild",
+        "If a derived file exists, serving it requires a stored signature containing at least size and mtime (or a content hash) of each source compared before use; if no derived file exists, the report says so explicitly",
+        "A committed test edits or deletes a source file and asserts the answer changes, and the transcript shows a planted 'skip the validity check' bug turning that test red",
+        "When the derived data is stale, the program prints a one-line notice (stderr) that it fell back or refreshed",
+        "The write-up gives before/after CPU seconds min of N and names the equality proof"
+      ]
+    },
+    {
+      "id": 3,
+      "eval_name": "slow-cli-diagnose",
+      "prompt": "At {workdir}: `python lookup.py \"Alice Brown\"` answers a one-row question from a 2,000-row CSV and takes about two seconds, which is embarrassing. Get it under 0.25 seconds. `lookup.py --full` and `build.py` must keep working and their output must not change. Standard library only; commit as you go; end with a short write-up with the numbers.",
+      "expected_output": "Profiling before any edit finds the heavy import (hidden behind common.py) and the quadratic dedupe; lazy import + linear dedupe; outputs identical for awkward names; build.py untouched and reported as not sped up; planted bugs.",
+      "files": ["evals/files/make_fixtures.py"],
+      "assertions": [
+        "The transcript shows a profiling or timing command (cProfile, -X importtime, or repeated timed runs) before the first edit to any .py file",
+        "python -X importtime lookup.py Alice shows no heavy module import, or its cumulative import time is under 50 ms",
+        "stdout, stderr and exit code are identical to the original for 8 grader-chosen names: exact, wrong case, trailing space, a unicode name, an absent name, a duplicated name, an empty argument, two arguments",
+        "lookup.py --full output is identical to the original for 3 names",
+        "build.py still runs and writes an identical table.sum.txt",
+        "The write-up gives before/after CPU seconds for lookup, lookup --full and build, and states that build was not sped up",
+        "At least 3 planted bugs are listed with verdicts, including an 'always take the fast path' bug killed by the absent-name case"
+      ]
+    }
+  ]
+}

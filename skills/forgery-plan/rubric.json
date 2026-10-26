@@ -1,0 +1,453 @@
+{
+ "_doc": "Forgery routes: cheap ways to produce a claimed piece of evidence WITHOUT the effect being real. cost = how much the route costs a faker while it is OPEN (0 = free, 1 = needs the world's cooperation). A route is CLOSED when ANY clause in closed_if holds on the claim's fields; a field the claim does not state never closes anything (unknown counts as OPEN). ops: == != >= <= > <. kinds = the claim kinds the route applies to. Edit freely; the selftest checks every closes_with names an existing skill folder.",
+ "kinds": [
+  "backtest",
+  "forward_record",
+  "test_pass",
+  "model_metric",
+  "data_finding"
+ ],
+ "routes": [
+  {
+   "id": "search_then_report_best",
+   "cost": 0.01,
+   "how": "try many variants, report only the best one as if it were the only one",
+   "kinds": [
+    "backtest",
+    "model_metric",
+    "data_finding"
+   ],
+   "closed_if": [
+    {
+     "field": "variants_tried",
+     "op": "<=",
+     "value": 1
+    },
+    {
+     "field": "deflated",
+     "op": "==",
+     "value": true
+    },
+    {
+     "field": "preregistered",
+     "op": "==",
+     "value": true
+    }
+   ],
+   "closes_with": [
+    "deflated-sharpe",
+    "pbo-overfit",
+    "pre-register"
+   ]
+  },
+  {
+   "id": "in_sample_only",
+   "cost": 0.02,
+   "how": "fit and score on the same data, so any curve-fit looks like skill",
+   "kinds": [
+    "backtest",
+    "model_metric"
+   ],
+   "closed_if": [
+    {
+     "field": "out_of_sample",
+     "op": "==",
+     "value": true
+    }
+   ],
+   "closes_with": [
+    "walk-forward-split"
+   ]
+  },
+  {
+   "id": "lookahead_in_features",
+   "cost": 0.03,
+   "how": "let a feature, label or normaliser see bars after its timestamp (centred average, full-sample z-score, revised data)",
+   "kinds": [
+    "backtest",
+    "model_metric",
+    "data_finding"
+   ],
+   "closed_if": [
+    {
+     "field": "lookahead_checked",
+     "op": "==",
+     "value": true
+    }
+   ],
+   "closes_with": [
+    "light-cone",
+    "triple-barrier"
+   ]
+  },
+  {
+   "id": "overlapping_sample_tstat",
+   "cost": 0.03,
+   "how": "count overlapping multi-bar returns as independent, inflating the t-stat by about sqrt(horizon)",
+   "kinds": [
+    "backtest",
+    "data_finding",
+    "model_metric"
+   ],
+   "closed_if": [
+    {
+     "field": "overlapping_samples",
+     "op": "==",
+     "value": false
+    },
+    {
+     "field": "hac",
+     "op": "==",
+     "value": true
+    }
+   ],
+   "closes_with": [
+    "hac-regression",
+    "bootstrap-ci"
+   ]
+  },
+  {
+   "id": "tuned_on_test_set",
+   "cost": 0.04,
+   "how": "keep adjusting parameters until the held-out score looks good, so the test set becomes training data",
+   "kinds": [
+    "backtest",
+    "model_metric"
+   ],
+   "closed_if": [
+    {
+     "field": "preregistered",
+     "op": "==",
+     "value": true
+    },
+    {
+     "field": "walk_forward",
+     "op": "==",
+     "value": true
+    }
+   ],
+   "closes_with": [
+    "walk-forward-split",
+    "pre-register"
+   ]
+  },
+  {
+   "id": "survivorship_universe",
+   "cost": 0.05,
+   "how": "backtest on today's listed names, so every delisted loser is silently missing",
+   "kinds": [
+    "backtest",
+    "data_finding"
+   ],
+   "closed_if": [
+    {
+     "field": "point_in_time_universe",
+     "op": "==",
+     "value": true
+    }
+   ],
+   "closes_with": [
+    "data-hygiene"
+   ]
+  },
+  {
+   "id": "cherry_picked_period",
+   "cost": 0.05,
+   "how": "choose the start and end dates where the effect happens to look strongest",
+   "kinds": [
+    "backtest",
+    "data_finding",
+    "forward_record"
+   ],
+   "closed_if": [
+    {
+     "field": "preregistered",
+     "op": "==",
+     "value": true
+    },
+    {
+     "field": "regimes_checked",
+     "op": "==",
+     "value": true
+    },
+    {
+     "field": "period_years",
+     "op": ">=",
+     "value": 15
+    }
+   ],
+   "closes_with": [
+    "pre-register",
+    "regime-split"
+   ]
+  },
+  {
+   "id": "costs_ignored",
+   "cost": 0.05,
+   "how": "assume free, instant fills at the close, so a high-turnover nothing looks profitable",
+   "kinds": [
+    "backtest"
+   ],
+   "closed_if": [
+    {
+     "field": "costs_included",
+     "op": "==",
+     "value": true
+    }
+   ],
+   "closes_with": [
+    "market-impact"
+   ]
+  },
+  {
+   "id": "snooping_across_sessions",
+   "cost": 0.05,
+   "how": "earlier sessions already looked at this data; the 'first' test is really the Nth, and nobody counted",
+   "kinds": [
+    "backtest",
+    "model_metric",
+    "data_finding"
+   ],
+   "closed_if": [
+    {
+     "field": "sessions_on_data",
+     "op": "<=",
+     "value": 1
+    },
+    {
+     "field": "preregistered",
+     "op": "==",
+     "value": true
+    }
+   ],
+   "closes_with": [
+    "lineage-ledger",
+    "deflated-sharpe",
+    "pre-register"
+   ]
+  },
+  {
+   "id": "small_sample_luck",
+   "cost": 0.06,
+   "how": "stop as soon as a handful of observations look good; small n makes luck look like signal",
+   "kinds": [
+    "backtest",
+    "forward_record",
+    "model_metric",
+    "data_finding"
+   ],
+   "closed_if": [
+    {
+     "field": "n_obs",
+     "op": ">=",
+     "value": 100
+    }
+   ],
+   "closes_with": [
+    "sprt-sequential",
+    "bootstrap-ci"
+   ]
+  },
+  {
+   "id": "no_null_comparison",
+   "cost": 0.04,
+   "how": "report the raw effect without showing that shuffled or random signals do not produce the same thing",
+   "kinds": [
+    "backtest",
+    "data_finding",
+    "model_metric"
+   ],
+   "closed_if": [
+    {
+     "field": "null_compared",
+     "op": "==",
+     "value": true
+    }
+   ],
+   "closes_with": [
+    "signal-nulls"
+   ]
+  },
+  {
+   "id": "test_cannot_fail",
+   "cost": 0.01,
+   "how": "write a test whose assertion holds whatever the code does (vacuous loop, assert on a constant, swallowed error)",
+   "kinds": [
+    "test_pass"
+   ],
+   "closed_if": [
+    {
+     "field": "planted_bug_caught",
+     "op": "==",
+     "value": true
+    }
+   ],
+   "closes_with": [
+    "plant-the-bug",
+    "vacuous-success-audit"
+   ]
+  },
+  {
+   "id": "weak_assertions",
+   "cost": 0.02,
+   "how": "assert only types, lengths or 'no exception', so most real bugs still pass",
+   "kinds": [
+    "test_pass"
+   ],
+   "closed_if": [
+    {
+     "field": "mutation_kill_rate",
+     "op": ">=",
+     "value": 0.8
+    }
+   ],
+   "closes_with": [
+    "mutation-audit",
+    "weak-assert-scan"
+   ]
+  },
+  {
+   "id": "backdated_forward_log",
+   "cost": 0.08,
+   "how": "write the 'prediction' after the outcome is known and date it earlier",
+   "kinds": [
+    "forward_record"
+   ],
+   "closed_if": [
+    {
+     "field": "timestamped_externally",
+     "op": "==",
+     "value": true
+    }
+   ],
+   "closes_with": [
+    "forward-score",
+    "research-spine"
+   ]
+  },
+  {
+   "id": "many_forward_records_report_one",
+   "cost": 0.07,
+   "how": "run several forward records quietly and show the one that worked",
+   "kinds": [
+    "forward_record"
+   ],
+   "closed_if": [
+    {
+     "field": "variants_tried",
+     "op": "<=",
+     "value": 1
+    },
+    {
+     "field": "preregistered",
+     "op": "==",
+     "value": true
+    }
+   ],
+   "closes_with": [
+    "pre-register",
+    "lineage-ledger"
+   ]
+  },
+  {
+   "id": "one_regime_window",
+   "cost": 0.3,
+   "how": "no trick needed, only patience: a short forward window inside one friendly regime records luck as skill",
+   "kinds": [
+    "forward_record"
+   ],
+   "closed_if": [
+    {
+     "field": "period_years",
+     "op": ">=",
+     "value": 3
+    },
+    {
+     "field": "regimes_checked",
+     "op": "==",
+     "value": true
+    }
+   ],
+   "closes_with": [
+    "regime-split",
+    "sprt-sequential"
+   ]
+  },
+  {
+   "id": "unshared_unreproducible",
+   "cost": 0.1,
+   "how": "keep code and data private, so an honest bug or a quiet edit can never be found",
+   "kinds": [
+    "backtest",
+    "forward_record",
+    "test_pass",
+    "model_metric",
+    "data_finding"
+   ],
+   "closed_if": [
+    {
+     "field": "shared",
+     "op": "==",
+     "value": true
+    }
+   ],
+   "closes_with": [
+    "second-source",
+    "handicap-test"
+   ]
+  },
+  {
+   "id": "optional_stopping",
+   "cost": 0.04,
+   "how": "peek at the running score and stop collecting (or stop the forward test) the moment it crosses the bar",
+   "kinds": [
+    "backtest",
+    "forward_record",
+    "model_metric",
+    "data_finding"
+   ],
+   "closed_if": [
+    {
+     "field": "stopping_rule_fixed",
+     "op": "==",
+     "value": true
+    },
+    {
+     "field": "preregistered",
+     "op": "==",
+     "value": true
+    }
+   ],
+   "closes_with": [
+    "sprt-sequential",
+    "pre-register"
+   ]
+  },
+  {
+   "id": "moved_bar_after_freeze",
+   "cost": 0.03,
+   "how": "edit the pre-registration after seeing the number (lower the bar, add the covariate that makes it work) and re-run, so dates and commit ancestry still look honest",
+   "kinds": [
+    "backtest",
+    "forward_record",
+    "model_metric",
+    "data_finding"
+   ],
+   "closed_if": [
+    {
+     "field": "prereg_integrity_checked",
+     "op": "==",
+     "value": true
+    },
+    {
+     "field": "timestamped_externally",
+     "op": "==",
+     "value": true
+    }
+   ],
+   "closes_with": [
+    "pre-register"
+   ]
+  }
+ ]
+}

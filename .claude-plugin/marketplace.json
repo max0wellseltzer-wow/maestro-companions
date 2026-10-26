@@ -1,0 +1,14 @@
+{
+  "name": "maestro-companions",
+  "owner": {
+    "name": "max0wellseltzer-wow"
+  },
+  "description": "Sixty-seven skills that go well with skill-maestro, chosen by evidence, not by theme: every skill the Maestro's own ledger shows was read, tried, judged to fit or rated useful in real sessions on the author's machine (pack_build.py --suggest, 2026-10-26), plus pov-core, the engine the twenty-two point-of-view lenses run on, and literal-execution, which finish-everything loads. Each skill folder keeps its SKILL.md and scripts; paths and the author's name are scrubbed. Some were written for one workspace's rituals (landing, decisions, scheduled tasks); their SKILL.md says so in its first lines.",
+  "plugins": [
+    {
+      "name": "maestro-companions",
+      "source": "./",
+      "description": "Sixty-seven skills that go well with skill-maestro, chosen by evidence, not by theme: every skill the Maestro's own ledger shows was read, tried, judged to fit or rated useful in real sessions on the author's machine (pack_build.py --suggest, 2026-10-26), plus pov-core, the engine the twenty-two point-of-view lenses run on, and literal-execution, which finish-everything loads. Each skill folder keeps its SKILL.md and scripts; paths and the author's name are scrubbed. Some were written for one workspace's rituals (landing, decisions, scheduled tasks); their SKILL.md says so in its first lines."
+    }
+  ]
+}

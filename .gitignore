@@ -1,0 +1,3 @@
+# machine-local files that must never ship in the package
+**/__pycache__/
+**/state/

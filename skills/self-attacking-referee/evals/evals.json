@@ -1,0 +1,20 @@
+{
+  "skill_name": "self-attacking-referee",
+  "evals": [
+    {"id": 1, "eval_name": "hourly-momentum-t",
+     "prompt": "My 24-hour momentum signal on BTC hourly bars has t = 3.1 on overlapping 24h forward returns. Is it significant?",
+     "expected_output": "Does not accept t=3.1 at face value: builds a null world with the real autocorrelation and the 24h overlap, audits the t-test's false-alarm rate and power with referee.py (seed and trials quoted), reports the verdict with its audit line, and withholds it as JUDGE_UNTRUSTED if false alarms are clearly above 5%.", "files": []},
+    {"id": 2, "eval_name": "gate-threshold",
+     "prompt": "Add a gate to the screener's quality page: flag a layout as 'working' when its hit rate beats 55% over the last 60 days.",
+     "expected_output": "Writes the gate as a judge, audits it on a null world (layouts with no skill, same base rate and overlap), reports how often a skill-less layout is flagged 'working' and the power against a realistic edge, before shipping the threshold.", "files": []},
+    {"id": 3, "eval_name": "nothing-found",
+     "prompt": "The test found no effect of earnings week on volume for the 40 small caps. So there is no effect, right?",
+     "expected_output": "Measures power against the smallest effect worth caring about; if POWERLESS, reports NOT_TESTABLE rather than 'no effect'.", "files": []},
+    {"id": 4, "eval_name": "which-null",
+     "prompt": "For the trend-following drawdown test on daily stock panels, should I use a shuffle null, a block bootstrap, or HAC t?",
+     "expected_output": "Does not pick by habit: runs the candidates in null_tournament.py on at least three null worlds shaped like the panel (iid, real autocorrelation, cross-sectional common factor), states the survival rule first, shows the table, and uses the top survivor (or reports NO_VALID_TEST).", "files": []},
+    {"id": 5, "eval_name": "tests-disagree",
+     "prompt": "The permutation test says p=0.002 but the HAC t says p=0.21 for the same signal. Which one do I believe?",
+     "expected_output": "Settles it with a tournament on known-null worlds matching the data; the one that cries wolf on the autocorrelated world is disqualified; quotes the false-alarm table.", "files": []}
+  ]
+}
